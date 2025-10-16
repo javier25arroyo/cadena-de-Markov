@@ -1,7 +1,10 @@
 import numpy as np
 
 def l1_error(x, y):
-    return float(np.linalg.norm(x - y, 1))
+    """Calcula el error L1 de forma optimizada."""
+    return float(np.sum(np.abs(x - y)))
 
 def l2_error(x, y):
-    return float(np.linalg.norm(x - y, 2))
+    """Calcula el error L2 de forma optimizada."""
+    diff = x - y
+    return float(np.sqrt(np.dot(diff, diff)))

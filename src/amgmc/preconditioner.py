@@ -8,16 +8,36 @@ class SVDBasedPreconditioner:
     A: sp.csr_matrix
     k: int = 4
     reg: float = 1e-8
-
-    def _approx_inverse_with_svd(self, b):
+    _A_pinv: np.ndarray = None  # Cache de la pseudo-inversa
+    
+    def __post_init__(self):
+        """Pre-calcula la pseudo-inversa para mejor rendimiento."""
         A_dense = self.A.toarray()
-        U, s, Vt = np.linalg.svd(A_dense, full_matrices=False)
-        s_inv = np.array([1/x if x > self.reg else 0.0 for x in s])
-        A_pinv = (Vt.T * s_inv) @ U.T
-        return A_pinv @ b
+        
+        # SVD con mejores opciones de rendimiento
+        U, s, Vt = np.linalg.svd(A_dense, full_matrices=False, hermitian=False)
+        
+        # Vectorización de la inversión de valores singulares
+        s_inv = np.where(s > self.reg, 1.0 / s, 0.0)
+        
+        # Pre-cálculo de la pseudo-inversa (más eficiente que recalcular cada vez)
+        self._A_pinv = (Vt.T * s_inv) @ U.T
+    
+    def _approx_inverse_with_svd(self, b):
+        """Aplica la pseudo-inversa pre-calculada."""
+        return self._A_pinv @ b
 
     def as_linear_operator(self):
+        """Retorna un operador lineal optimizado para usar como precondicionador."""
         n = self.A.shape[0]
+        
         def matvec(v):
-            return self._approx_inverse_with_svd(np.asarray(v))
-        return spla.LinearOperator((n, n), matvec=matvec, dtype=float)
+            # Conversión eficiente a array
+            v_arr = np.asarray(v, dtype=np.float64)
+            return self._approx_inverse_with_svd(v_arr)
+        
+        return spla.LinearOperator(
+            (n, n), 
+            matvec=matvec, 
+            dtype=np.float64
+        )
