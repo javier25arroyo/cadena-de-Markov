@@ -279,7 +279,7 @@ $env:PYTHONPATH = "$PWD\src"
 python scripts\run_demo.py
 ```
 
-### ❌ Error de Permisos en PowerShell
+### Error de Permisos en PowerShell
 
 **Causa:** Política de ejecución de PowerShell restringe scripts.
 
@@ -293,7 +293,7 @@ Si no tienes permisos de administrador:
 powershell.exe -ExecutionPolicy Bypass -File .\install_windows.ps1
 ```
 
-### ❌ Dependencias No Se Instalan
+### Dependencias No Se Instalan
 
 **Causa:** pip desactualizado o problemas de red.
 
@@ -309,7 +309,7 @@ pip install -r requirements.txt --force-reinstall
 pip install -r requirements.txt --no-cache-dir
 ```
 
-### ⚠️ Rendimiento Más Bajo de lo Esperado
+### Rendimiento Más Bajo de lo Esperado
 
 **Diagnóstico:**
 
@@ -336,7 +336,7 @@ python -c "import numpy; numpy.__config__.show()"
 - Cierra otros programas que consuman CPU
 - En laptops, asegúrate de estar conectado a corriente (no en modo ahorro de energía)
 
-### ❌ Error con Numba
+### Error con Numba
 
 **Causa:** Numba es opcional y puede fallar en algunos sistemas.
 
@@ -349,7 +349,7 @@ pip install numba --no-cache-dir
 
 Si continúa fallando, puedes ignorarlo - no es crítico.
 
-### ❌ Python No Encontrado
+### Python No Encontrado
 
 **Causa:** Python no está instalado o no está en PATH.
 
@@ -360,14 +360,14 @@ Si continúa fallando, puedes ignorarlo - no es crítico.
 3. Reiniciar terminal
 4. Verificar: `python --version`
 
-### ❌ Error: "pip is not recognized"
+### Error: "pip is not recognized"
 
 **Solución:**
 ```powershell
 python -m pip install --upgrade pip
 ```
 
-### 🔍 Obtener Más Ayuda
+### Obtener Más Ayuda
 
 Si ninguna solución funciona:
 
