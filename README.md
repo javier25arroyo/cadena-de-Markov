@@ -132,72 +132,57 @@ print(f"Convergió: {info['converged']}")
 print(f"Residual: {residual_norm(A, x, b):.2e}")
 ```
 
-### Ejecutar Tests (si existen)
+### Tests
 
 ```powershell
 pytest tests -v
 ```
 
-## 🔧 Optimizaciones Implementadas
+---
 
-Este proyecto ha sido completamente optimizado para Windows, logrando mejoras de **2-4x en rendimiento general**.
+## 📚 API esencial
 
-### 1. 🎯 Precondicionador SVD con Caching ⭐ (Mejora más importante)
+Funciones y clases clave que usarás:
 
-**Mejora: ~90% más rápido**
+- `build_transition_matrix(P_dense)`: Construye la matriz de transición a partir de una matriz densa.
+- `stationary_distribution_power(P)`: Calcula la distribución estacionaria usando el método de potencias.
+- `build_singular_system(P)`: Construye el sistema singular asociado a la cadena de Markov.
+- `SVDBasedPreconditioner(A)`: Clase para el precondicionador basado en SVD.
+- `solve_singular_system_lgmres(A, b, M=M)`: Resuelve el sistema singular usando LGMRES con el precondicionador $M$.
 
-La pseudo-inversa SVD se calcula una sola vez durante la inicialización y se cachea para todas las aplicaciones posteriores. Esto es crítico porque el precondicionador se aplica muchas veces durante las iteraciones del solver.
+Ejemplo básico:
 
-**Antes:** SVD se calculaba en cada aplicación  
-**Después:** SVD se calcula una vez, se cachea, y se reutiliza
+```python
+from amgmc.markov import build_transition_matrix, stationary_distribution_power
+from amgmc.preconditioner import SVDBasedPreconditioner
+from amgmc.solvers import solve_singular_system_lgmres
 
-### 2. 🚀 Multi-threading Automático
+# Matriz de transición de ejemplo
+P_dense = [[0.9, 0.1], [0.1, 0.9]]
 
-**Mejora: 2-4x más rápido en operaciones matriciales**
+# Construir matriz de transición
+P = build_transition_matrix(P_dense)
 
-Configuración automática de variables de entorno para usar todos los núcleos del CPU:
-- Detección automática del número de núcleos
-- Configuración de MKL/OpenBLAS
-- Habilitación de instrucciones AVX2 (si están disponibles)
+# Calcular distribución estacionaria
+pi = stationary_distribution_power(P)
 
-### 3. 📊 Operaciones Vectorizadas
+# Mostrar resultado
+print("Distribución estacionaria:", pi)
 
-**Mejora: 30-70% más rápido según la operación**
+# Construir sistema singular
+A = build_singular_system(P)
 
-- Eliminación completa de loops de Python
-- Uso de operaciones NumPy nativas optimizadas
-- Pre-alocación de arrays temporales
-- Operaciones in-place para evitar copias
+# Resolver sistema usando LGMRES
+b = [1, 0]  # Vector de términos independientes
+x, info = solve_singular_system_lgmres(A, b, M=SVDBasedPreconditioner(A).as_linear_operator())
 
-### 4. 🎲 Algoritmos Optimizados
+# Mostrar solución
+print("Solución:", x)
+```
 
-**Mejoras específicas:**
-- **BFS** (irreducibilidad): +30% más rápido - uso de índices en lugar de pop()
-- **Método de potencias**: +25% más rápido - pre-alocación y normalización in-place
-- **Coarsening AMG**: +70% más rápido - vectorización completa
-- **LGMRES**: +20% más rápido - parámetros optimizados (inner_m=30, outer_k=3)
+---
 
-### 5. 💾 Uso Eficiente de Memoria
-
-- Tipos de datos consistentes (`float64` para x64)
-- Matrices sparse en formato CSR optimizado
-- Evitar creaciones innecesarias de arrays temporales
-- Operaciones in-place cuando es posible
-
-### 📈 Tabla Resumen de Mejoras
-
-| Componente | Mejora | Técnica Principal |
-|------------|--------|-------------------|
-| Precondicionador SVD | +90% | Caching de pseudo-inversa |
-| Coarsening AMG | +70% | Vectorización completa |
-| Métricas L1/L2 | +40% | Operaciones directas |
-| BFS irreducibilidad | +30% | Algoritmo mejorado |
-| Método de potencias | +25% | Pre-alocación |
-| LGMRES | +20% | Parámetros optimizados |
-| Construcción matrices | +15% | División in-place |
-| **RENDIMIENTO GLOBAL** | **2-4x** | **Todas las anteriores** |
-
-## 📁 Estructura del Proyecto
+## 📁 Estructura del proyecto
 
 ```
 Proyecto/
