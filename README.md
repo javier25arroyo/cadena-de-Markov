@@ -381,6 +381,8 @@ python -c "import sys; print(sys.version); import numpy; print(numpy.__version__
    - `docs/QUICK_START.md` - Ejemplos de uso
    - `docs/OPTIMIZATIONS.md` - Detalles técnicos
 
+---
+
 ## 👨‍💻 Desarrollo y Contribuciones
 
 ### Configuración del Entorno de Desarrollo
@@ -422,12 +424,16 @@ pytest tests/ -v --cov=amgmc        # Con cobertura de código
 4. Ejecutar tests y benchmarks
 5. Documentar cambios
 
+---
+
 ## 📚 Documentación Adicional
 
 - **[docs/START_HERE.md](docs/START_HERE.md)** - 👈 Empieza aquí si eres nuevo
 - **[docs/QUICK_START.md](docs/QUICK_START.md)** - Guía rápida con ejemplos prácticos
 - **[docs/OPTIMIZATIONS.md](docs/OPTIMIZATIONS.md)** - Detalles técnicos de las optimizaciones
 - **[docs/CHANGELOG.md](docs/CHANGELOG.md)** - Historial completo de cambios
+
+---
 
 ## 🎓 Referencias y Recursos
 
@@ -443,6 +449,8 @@ pytest tests/ -v --cov=amgmc        # Con cobertura de código
 - [NumPy](https://numpy.org/) - Computación numérica
 - [SciPy](https://scipy.org/) - Algoritmos científicos
 - [Numba](https://numba.pydata.org/) - Compilación JIT (opcional)
+
+---
 
 ## 📋 Comandos Útiles de Referencia
 
@@ -473,6 +481,8 @@ pip cache purge                         # Limpiar cache de pip
 python -Bc "import pathlib, shutil; [shutil.rmtree(p) for p in pathlib.Path('.').rglob('__pycache__')]"  # Limpiar cache
 ```
 
+---
+
 ## 🏆 Características Destacadas
 
 ✅ **Instalación automatizada** - Un solo comando para configurar todo  
@@ -483,9 +493,13 @@ python -Bc "import pathlib, shutil; [shutil.rmtree(p) for p in pathlib.Path('.')
 ✅ **Documentación completa** - Guías, ejemplos y referencias  
 ✅ **Optimizado para Windows** - Aprovecha MKL y características de Windows  
 
+---
+
 ## 📄 Licencia
 
 Este es un proyecto académico desarrollado para el curso de Álgebra Lineal.
+
+---
 
 ## 🙋 Preguntas Frecuentes (FAQ)
 
