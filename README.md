@@ -1,173 +1,102 @@
-# AMG-MC: Algebraic Multigrid with SVD-based Preconditioner for Markov Chains
+@'
+# 🧮 AMG-MC: Multigrid Algebraico con Precondicionador SVD para Cadenas de Markov
 
-Proyecto de álgebra lineal que implementa un método multigrid algebraico (AMG) con precondicionador basado en SVD para resolver sistemas singulares derivados de cadenas de Markov.
+> Proyecto académico – Universidad CENFOTEC  
+> Equipo: Dayana Brenes · Gabriel Guzmán · Javier Pérez · Prof. Dorin Morales · Octubre 2025
 
----
+Este repositorio implementa un método multigrid algebraico (AMG) con un precondicionador basado en SVD para resolver sistemas singulares generados por cadenas de Markov. Incluye scripts listos para Windows, demos, benchmarks y pruebas.
 
-## 📑 Índice Rápido
-
-| Sección | Descripción |
-|---------|-------------|
-| [🚀 Características](#-características-principales) | Optimizaciones y mejoras implementadas |
-| [⚡ Instalación](#-instalación-rápida-1-minuto) | Instalar en Windows con un solo comando |
-| [🎮 Uso](#-uso-y-ejecución) | Ejecutar demos y benchmarks |
-| [🔧 Optimizaciones](#-optimizaciones-implementadas) | Detalles técnicos de mejoras de rendimiento |
-| [📁 Estructura](#-estructura-del-proyecto) | Organización del código |
-| [📊 Benchmarks](#-rendimiento-esperado) | Tiempos de ejecución y comparaciones |
-| [🐛 Troubleshooting](#-solución-de-problemas) | Soluciones a problemas comunes |
-| [📚 Documentación](#-documentación-adicional) | Guías adicionales y recursos |
-
-**¿Primera vez aquí?** → Lee [docs/START_HERE.md](docs/START_HERE.md)
+- ¿Quieres correrlo ya? Ve a “Instalación rápida” y “Ejecución”.
+- ¿Quieres entender la base? Revisa “Fundamento (5 min)”.
 
 ---
 
-## 🚀 Características Principales
+## 📌 Índice
 
-**Optimizado específicamente para Windows** con mejoras significativas de rendimiento:
+- Fundamento (5 min)
+- Requisitos
+- Instalación rápida (Windows) y alternativa manual
+- Ejecución: demo, benchmarks, tests y verificación
+- API esencial (con ejemplos)
+- Estructura del proyecto
+- Rendimiento y afinado opcional
+- Problemas frecuentes
+- Referencias
 
-- ✅ **2-4x más rápido** que la versión base
-- ✅ **Caching inteligente** de pseudo-inversas SVD (~90% más rápido)
-- ✅ **Multi-threading automático** - usa todos los núcleos del CPU
-- ✅ **Operaciones vectorizadas** con NumPy optimizado
-- ✅ **Instalación con un solo comando**
-- ✅ **Benchmarking integrado** para medir rendimiento
+---
 
-## 📋 Requisitos
+## 🧠 Fundamento (5 min)
 
-- **Python** 3.8 o superior
-- **Sistema Operativo**: Windows 10/11
-- **Hardware**: Cualquier CPU moderna (mejor con soporte AVX2)
-- **RAM**: 4GB mínimo, 8GB recomendado
+1) Cadenas de Markov  
+- Una matriz de transición $P \in \mathbb{R}^{n\times n}$ es fila-estocástica: $\sum_j p_{ij}=1$.  
+- La distribución estacionaria $\pi$ satisface: $\pi P = \pi$ y $\sum_i \pi_i = 1$.
 
-## ⚡ Instalación Rápida (1 minuto)
+2) Sistema singular asociado  
+- Resolver $\pi$ equivale a tratar con un sistema singular construido a partir de $P$.  
+- Usamos una matriz singular $A$ (ver “API esencial”): típicamente $A = I - P$ o $A = I - P^\top$ según convención interna.  
+- El núcleo de $A$ contiene un modo constante; para $A x = b$, $b$ debe estar en el rango de $A$ (p. ej., suma-cero) o se trabaja en el subespacio adecuado.
 
-### 🎯 Opción 1: PowerShell - Un Solo Comando (RECOMENDADO)
+3) AMG (Multigrid algebraico)  
+- Construye una jerarquía fino→grueso con operadores de interpolación $P_c$ y restricción $R_c$, y $A_c = R_c A P_c$.  
+- Los suavizadores eliminan errores de alta frecuencia; los niveles gruesos corrigen errores “suaves” difíciles para iterativos puros.
 
-Abre PowerShell en el directorio del proyecto y ejecuta:
+4) SVD como guía/precondicionador  
+- La descomposición $A = U \Sigma V^\top$ identifica modos “lentos” (singulares pequeños).  
+- Usarlos en el precondicionador y/o en $P_c, R_c$ estabiliza el proceso y reduce iteraciones.  
+- Clave práctica: cachear la SVD una sola vez y reutilizarla.
+
+5) Solver LGMRES  
+- LGMRES funciona bien con precondicionamiento y evita la estagnación típica de GMRES en sistemas casi singulares.  
+- Se monitoriza convergencia y norma del residual para validar.
+
+---
+
+## ✅ Requisitos
+
+- Python 3.8 o superior
+- Windows 10/11 (optimizado). También corre en Linux/macOS sin optimizaciones específicas.
+- NumPy y SciPy (en `requirements.txt`)
+- RAM: 4 GB mínimo (8 GB recomendado para matrices más grandes)
+
+---
+
+## ⚡ Instalación rápida (Windows)
+
+En PowerShell, en la raíz del repo:
 
 ```powershell
-.\install_windows.ps1
+[install_windows.ps1](http://_vscodecontentref_/2)
 ```
 
-**¡Eso es todo!** El script automáticamente:
-- ✓ Verifica Python y dependencias
-- ✓ Crea y activa entorno virtual
-- ✓ Instala todas las dependencias
-- ✓ Configura variables de entorno para máximo rendimiento
-- ✓ Ejecuta un demo de prueba
+Esto hará todo automáticamente:
+- Verifica Python y dependencias
+- Crea y activa un entorno virtual
+- Instala dependencias
+- Configura variables de entorno
+- Ejecuta un demo de prueba
 
-**💡 Nota sobre permisos:** Si obtienes un error de permisos al ejecutar scripts PowerShell:
+**Nota:** Si hay problemas de permisos, ejecuta primero:
 ```powershell
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### 🎯 Opción 2: CMD/Command Prompt
+---
 
-```cmd
-install_windows.bat
-```
+## 🎮 Ejecución
 
-### 🎯 Opción 3: Python Script
-
-```powershell
-python setup_windows.py
-```
-
-### 🎯 Opción 4: Instalación Manual Paso a Paso
-
-Si prefieres tener control total del proceso:
-
-**1. Verificar Python**
-
-```powershell
-python --version
-```
-
-Debe mostrar Python 3.8 o superior. Si no está instalado, descárgalo desde [python.org](https://www.python.org/downloads/).
-
-**2. Crear entorno virtual**
-
-```powershell
-python -m venv .venv
-```
-
-**3. Activar el entorno virtual**
-
-En PowerShell:
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-En CMD:
-```cmd
-.venv\Scripts\activate.bat
-```
-
-Deberías ver `(.venv)` al inicio de tu línea de comandos.
-
-**4. Actualizar pip**
-
-```powershell
-python -m pip install --upgrade pip
-```
-
-**5. Instalar dependencias**
-
-```powershell
-pip install -r requirements.txt
-```
-
-**6. Instalar el paquete en modo desarrollo**
-
-```powershell
-pip install -e .
-```
-
-**7. Verificar instalación**
+### Demo rápido
 
 ```powershell
 python scripts\run_demo.py
 ```
 
-Si ves la salida sin errores, ¡la instalación fue exitosa! ✅
-
-## 🎮 Uso y Ejecución
-
-### Ejecutar el Demo Principal
-
-```powershell
-python scripts\run_demo.py
-```
-
-**Salida esperada:**
-```
-pi (power method) sum: 1.0
-LGMRES info: {'info': 0, 'converged': True}
-Residual norm: 3.00e-16
-```
-
-### Medir Rendimiento en tu Sistema
+### Benchmarks
 
 ```powershell
 python scripts\benchmark.py
 ```
 
-Esto ejecutará pruebas con matrices de diferentes tamaños y mostrará:
-- Tiempos de construcción de matrices
-- Tiempos de cálculo de distribución estacionaria
-- Tiempos de solución de sistemas
-- Comparación de rendimiento
-
-**Salida esperada (sistema típico con i7/Ryzen 7):**
-```
-Tamaño     Build (ms)   Power (ms)   Solve (ms)   Total (ms)
-------------------------------------------------------------
-10         0.29         0.29         0.41         1.97
-50         0.19         0.22         0.24         4.83
-100        0.28         0.22         0.24         7.17
-```
-
-### Usar en tu Propio Código
+### Usar en tu código
 
 ```python
 import numpy as np
