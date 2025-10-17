@@ -1,4 +1,3 @@
-@'
 # 🧮 AMG-MC: Multigrid Algebraico con Precondicionador SVD para Cadenas de Markov
 
 > Proyecto académico – Universidad CENFOTEC  
