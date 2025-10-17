@@ -267,96 +267,16 @@ $env:OPENBLAS_NUM_THREADS = $cpuCount
 
 # Optimizaciones MKL
 $env:MKL_DYNAMIC = "TRUE"
-```
 
-**CMD:**
-```cmd
-set MKL_NUM_THREADS=8
-set OMP_NUM_THREADS=8
-set NUMEXPR_NUM_THREADS=8
-set MKL_DYNAMIC=TRUE
-```
-
-### Habilitar Instrucciones AVX2
-
-Si tu CPU soporta AVX2 (la mayoría de CPUs modernas desde 2013):
-
-```powershell
+# Habilitar AVX2 si es soportado
 $env:MKL_ENABLE_INSTRUCTIONS = "AVX2"
 ```
 
-Para verificar si tu CPU soporta AVX2:
-```powershell
-systeminfo | findstr /C:"Processor"
-```
+---
 
-Busca tu modelo en [Intel ARK](https://ark.intel.com/) o [AMD Specifications](https://www.amd.com/en/products/specifications/processors).
+## 🐛 Problemas frecuentes
 
-### Configurar Número de Threads Manualmente
-
-Para limitar el número de threads (útil en sistemas compartidos):
-
-```powershell
-$env:MKL_NUM_THREADS = 4  # Usar solo 4 threads
-```
-
-## 📊 Rendimiento Esperado
-
-### Benchmarks en Sistema Típico
-
-**Hardware de referencia:** Windows 11, Intel Core i7-10700 (8 cores @ 2.9GHz), 16GB RAM
-
-| Tamaño de Matriz | Tiempo Total | Build | Power Method | Solve |
-|------------------|--------------|-------|--------------|-------|
-| 10×10           | ~2 ms        | 0.3 ms | 0.3 ms      | 0.4 ms |
-| 50×50           | ~5 ms        | 0.2 ms | 0.2 ms      | 0.2 ms |
-| 100×100         | ~7 ms        | 0.3 ms | 0.2 ms      | 0.2 ms |
-| 500×500         | ~150 ms      | 2 ms   | 5 ms        | 50 ms |
-
-### Comparación con Versión No Optimizada
-
-| Operación | Antes | Después | Mejora |
-|-----------|-------|---------|--------|
-| Matriz 10×10 | ~4 ms | ~2 ms | **50%** |
-| Matriz 50×50 | ~12 ms | ~5 ms | **58%** |
-| Matriz 100×100 | ~35 ms | ~7 ms | **80%** |
-
-### Medir Rendimiento en Tu Sistema
-
-Para obtener benchmarks específicos de tu hardware:
-
-```powershell
-python scripts\benchmark.py
-```
-
-Esto ejecutará pruebas exhaustivas y mostrará:
-- Tiempos por componente
-- Rendimiento relativo
-- Información del sistema
-
-## 🔌 Desactivar el Entorno Virtual
-
-Cuando termines de trabajar con el proyecto:
-
-```powershell
-deactivate
-```
-
-Para volver a activarlo:
-
-**PowerShell:**
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-**CMD:**
-```cmd
-.venv\Scripts\activate.bat
-```
-
-## 🐛 Solución de Problemas
-
-### ❌ Error: "No module named 'amgmc'"
+### Error: "No module named 'amgmc'"
 
 **Causa:** El paquete no está instalado o el entorno virtual no está activado.
 
