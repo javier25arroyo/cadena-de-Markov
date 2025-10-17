@@ -108,7 +108,7 @@ from amgmc.markov import (
 from amgmc.preconditioner import SVDBasedPreconditioner
 from amgmc.solvers import solve_singular_system_lgmres, residual_norm
 
-# Define tu matriz de transición
+# Tu matriz de transición
 P_dense = np.array([
     [0.7, 0.2, 0.1],
     [0.3, 0.4, 0.3],
