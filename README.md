@@ -1,7 +1,7 @@
 # 🧮 AMG-MC: Multigrid Algebraico con Precondicionador SVD para Cadenas de Markov
 
 > Proyecto académico – Universidad CENFOTEC  
-> Equipo: Dayana Brenes · Gabriel Guzmán · Javier Pérez · Gabriel Caravaca Prof. Dorin Morales · Octubre 2025
+> Equipo: Dayana Brenes · Gabriel Guzmán · Javier Pérez · Gabriel Caravaca · Prof. Dorin Morales · Octubre 2025
 
 Este repositorio implementa un método multigrid algebraico (AMG) con un precondicionador basado en SVD para resolver sistemas singulares generados por cadenas de Markov. Incluye scripts listos para Windows, demos, benchmarks y pruebas.
 
